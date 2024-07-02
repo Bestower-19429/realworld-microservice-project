@@ -73,32 +73,32 @@ pipeline {
                 }
             }
         }
-        // // Perform DAST Test on Application
-        // stage('ZAP Dynamic Testing | DAST') {
-        //     steps {
-        //         sshagent(['OWASP-Zap-Credential']) {
-        //             sh 'ssh -o StrictHostKeyChecking=no ubuntu@3.21.231.152 "docker run -t zaproxy/zap-weekly zap-baseline.py -t http://18.117.75.81:30000/" || true'
-        //                                                 //JENKINS_PUBLIC_IP                                                  //EKS_WORKER_NODE_IP_ADDRESS:30000
-        //         }
-        //     }
-        // }
-        // // Production Deployment Approval
-        // stage('Approve Prod Deployment') {
-        //     steps {
-        //             input('Do you want to proceed?')
-        //     }
-        // }
-        // // // Deploy to The Production Environment
-        // stage('Deploy Microservice To The Prod Env'){
-        //     steps{
-        //         script{
-        //             withKubeConfig(caCertificate: '', clusterName: '', contextName: '', credentialsId: 'Kubernetes-Credential', namespace: '', restrictKubeConfigAccess: false, serverUrl: '') {
-        //                sh 'kubectl apply -f deploy-envs/prod-env/deployment.yaml'
-        //                sh 'kubectl apply -f deploy-envs/prod-env/loadbalancer-service.yaml'  //LoadBalancer Service
-        //             }
-        //         }
-        //     }
-        // }
+        // Perform DAST Test on Application
+        stage('ZAP Dynamic Testing | DAST') {
+            steps {
+                sshagent(['OWASP-Zap-Credential']) {
+                    sh 'ssh -o StrictHostKeyChecking=no ubuntu@3.21.231.152 "docker run -t zaproxy/zap-weekly zap-baseline.py -t http://18.117.75.81:30000/" || true'
+                                                        //JENKINS_PUBLIC_IP                                                  //EKS_WORKER_NODE_IP_ADDRESS:30000
+                }
+            }
+        }
+        // Production Deployment Approval
+        stage('Approve Prod Deployment') {
+            steps {
+                    input('Do you want to proceed?')
+            }
+        }
+        // // Deploy to The Production Environment
+        stage('Deploy Microservice To The Prod Env'){
+            steps{
+                script{
+                    withKubeConfig(caCertificate: '', clusterName: '', contextName: '', credentialsId: 'Kubernetes-Credential', namespace: '', restrictKubeConfigAccess: false, serverUrl: '') {
+                       sh 'kubectl apply -f deploy-envs/prod-env/deployment.yaml'
+                       sh 'kubectl apply -f deploy-envs/prod-env/loadbalancer-service.yaml'  //LoadBalancer Service
+                    }
+                }
+            }
+        }
     }
     post {
     always {
